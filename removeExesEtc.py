@@ -61,6 +61,7 @@ def clean_text(edited):
     edited = re.sub("andrewiswhite ","Andrew ",edited)
 
     edited = re.sub(r"^ +", "", edited)
+    edited = re.sub(r" $", "", edited)
     return edited
 
 
@@ -90,6 +91,7 @@ def clean_csv():
 
     with open('cleaned_tweets.txt', 'w') as f:
         for tweet in tweets:
-            clean = clean_text(tweet)
-            if len(clean) != 0 and len(clean.split(" 3")) >= 1:
-                f.write("~~~~~~~~~~" + clean + "\n")
+            for part in re.split(r"\. |\? ",tweet):
+                clean = clean_text(part)
+                if len(clean) != 0 and len(clean) > 5:
+                    f.write("~~~~~~~~~~" + clean + "\n")

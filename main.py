@@ -5,7 +5,6 @@ import generate
 import generate_ngrams
 
 def main():
-    print(os.environ.get('CONSUMER_KEY'))
     removeExesEtc.clean_csv()
 
     generate_ngrams.generate_ngrams()
