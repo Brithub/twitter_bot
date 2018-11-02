@@ -12,7 +12,7 @@ while True:
     wait_hours = 1
     current_ctime = time.ctime()
 
-    if os.path.isfile('last.time.pickle'):
+    if os.path.isfile(time_pickle_path):
 
         with open(time_pickle_path, 'rb') as handle:
             old_time = pickle.load(handle)
@@ -22,7 +22,7 @@ while True:
             tweet.write_tweet(generated)
             print("Tweeted: \"",generated,"\"")
 
-            with open('last.time.pickle', 'wb') as handle:
+            with open(time_pickle_path, 'wb') as handle:
                 pickle.dump(time.time(), handle)
             print("waiting ", wait_hours*3600, " seconds")
             time.sleep(wait_hours*3600)
