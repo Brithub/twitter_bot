@@ -17,7 +17,7 @@ def generate():
 
     while not generated:
         written = ""
-        written += firstWords[random.randint(0, len(firstWords))]
+        written += firstWords[random.randint(0, len(firstWords)-1)]
         previous = written
 
         while "terminate" not in written and "TERMINATE" not in written and "Terminate" not in written:
@@ -48,7 +48,9 @@ def generate():
 
         final = re.sub(" terminate| Terminate| TERMINATE", "", written)
         final = final.rstrip()
-        final = re.sub(" go na ", " gonna ", final)
+        final = re.sub(" gon na ", " gonna ", final)
+        final = re.sub(" got ta ", " gotta ", final)
+        final = re.sub(" wan na ", " wanna ", final)
         final = final.capitalize()
         if final.count(" ") > 0 and len(final) <= 85:
             return final

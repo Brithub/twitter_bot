@@ -4,28 +4,33 @@ import pickle
 import generate
 import time
 import tweet
+import os.path
+
+time_pickle_path = 'last.time.pickle'
 
 while True:
-
+    wait_hours = 1
     current_ctime = time.ctime()
 
-    time_time = current_ctime.split(" ")[3].split(":")[0]
-    valid_time = 10 <= int(time_time) <= 21
+    if os.path.isfile('last.time.pickle'):
 
-    with open('last.time.pickle', 'rb') as handle:
-        old_time = pickle.load(handle)
+        with open(time_pickle_path, 'rb') as handle:
+            old_time = pickle.load(handle)
 
-    if old_time + 7200 < time.time() and valid_time:
-        generated = generate.generate()
-        tweet.write_tweet(generated)
-        print("Tweeted: \"",generated,"\"")
+        if old_time + wait_hours*3600 < time.time():
+            generated = generate.generate()
+            tweet.write_tweet(generated)
+            print("Tweeted: \"",generated,"\"")
 
-        with open('last.time.pickle', 'wb') as handle:
-            pickle.dump(time.time(), handle)
-        print("waiting ", 7200, " seconds")
-        time.sleep(7200)
+            with open('last.time.pickle', 'wb') as handle:
+                pickle.dump(time.time(), handle)
+            print("waiting ", wait_hours*3600, " seconds")
+            time.sleep(wait_hours*3600)
+        else:
+            remaining = wait_hours*1800
+            print("waiting ", remaining, " seconds")
+            time.sleep(remaining)
+
     else:
-        remaining = 1600
-        print("waiting ", remaining, " seconds")
-        time.sleep(remaining)
-
+        with open(time_pickle_path, 'wb') as handle:
+            pickle.dump(0, handle)
