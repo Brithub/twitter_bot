@@ -17,6 +17,7 @@ def generate_ngrams():
         big+=line+" TERMINATE "
     tokens = nltk.word_tokenize(big)
     bigrams = nltk.ngrams(tokens, 2)
+    trigrams = nltk.ngrams(tokens, 3)
 
 
     bigram_dict = {}
@@ -29,6 +30,16 @@ def generate_ngrams():
                     bigram_dict[key.lower()] = bigram_dict[key.lower()] + 1
                 else:
                     bigram_dict[key.lower()] = 1
+    trigram_dict = {}
+    for trip in trigrams:
+        key = trip[0].lower() + " " + trip[1].lower() + " " + trip[2].lower()
+        key = re.sub("~~~~~~~~~~", "", key)
+        if len(trip[0]) <= 15 and len(trip[1]) <= 15 :
+            if "terminate" not in trip[0].lower():
+                if key.lower() in trigram_dict:
+                    trigram_dict[key.lower()] = trigram_dict[key.lower()] + 1
+                else:
+                    trigram_dict[key.lower()] = 1
 
 
     unigram_dict = {}
@@ -56,6 +67,9 @@ def generate_ngrams():
 
     with open('bi.pickle', 'wb') as handle:
         pickle.dump(bigram_dict, handle)
+
+    with open('tri.pickle', 'wb') as handle:
+        pickle.dump(trigram_dict, handle)
 
     with open('first.pickle', 'wb') as handle:
         pickle.dump(firstWords, handle)
