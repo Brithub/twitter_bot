@@ -2,7 +2,8 @@ import re
 
 def clean_text(edited):
 
-    edited = re.sub("rt ","",edited)
+    edited = re.sub("^(RT|rt) .*","",edited)
+    edited = re.sub("^@.*","",edited)
     edited = re.sub(r"^(@\w?[^\s]+)(.@\w?[^\s]+)*", "", edited)
     edited = re.sub(r"^\"(@\w?[^\s]+)(.@\w?[^\s]+)*", "", edited)
     edited = re.sub("@","",edited)
