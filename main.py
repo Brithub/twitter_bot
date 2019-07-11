@@ -1,16 +1,14 @@
-import os
-
-import removeExesEtc
 import generate
-import generate_ngrams
+
 
 def main():
-    removeExesEtc.clean_csv()
+    path = "cleaned_tweets.txt"
+    with open(path, 'r') as file:
+        text = file.read()
+    tweets = text.split("\n")
 
-    generate_ngrams.generate_ngrams()
-
-    for i in range(10):
-        print(generate.generate())
+    for i in range(15):
+        print(generate.generate(tweets))
 
 
 if __name__ == '__main__':

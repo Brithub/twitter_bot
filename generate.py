@@ -1,12 +1,12 @@
-import pickle
-import random
 import re
+import generate_ngrams
+import random
 
 
 def generate_next_word(written,bigram_dict,trigram_dict):
 
     #use bigrams for the second word
-    if written.count(" ") < 2 or random.randint(0,100) > 50:
+    if written.count(" ") < 2 or random.randint(0,100) > 85:
         return generate_from_bigrams(written,bigram_dict)
     else:
         return generate_from_trigrams(written,trigram_dict,bigram_dict)
@@ -21,20 +21,14 @@ def generate_from_bigrams(prev,bigram_dict):
     if len(nextWords) == 1:
         next_word = nextWords[0][0].split(" ")[1]
     elif len(nextWords) == 0:
-        next_word = "terminate"
+        next_word = "RETRYRETRY"
     else:
-        total = 0
+        candidates = []
         for pair in nextWords:
-            total += pair[1]
-        chosen = random.randint(1, total) - 1
-        searching = 0
-        index = 0
-        temp_word = ""
-        while searching < chosen:
-            temp_word = nextWords[index][0].split(" ")[1]
-            searching += nextWords[index][1]
-            index += 1
-        next_word = temp_word
+            for frequency in range(0,pair[1]):
+                candidates.append(pair[0].split(" ")[1])
+        random.shuffle(candidates)
+        next_word = candidates[0]
     return next_word
 
 
@@ -45,64 +39,58 @@ def generate_from_trigrams(prev,trigram_dict,bigram_dict):
     old = prev.split(" ")[-1]
     older = prev.split(" ")[-2]
 
-    nextWords = []
-    for trip in trigram_dict:
-        if trip.lower().split(" ")[0]+" "+trip.lower().split(" ")[1] == older.lower()+" "+old.lower():
-            nextWords.append([trip, trigram_dict[trip]])
-    if len(nextWords) == 1:
-        next_word = nextWords[0][0].split(" ")[2]
-    elif len(nextWords) == 0:
+    next_words = []
+    for triplet in trigram_dict:
+        if triplet.lower().split(" ")[0]+" "+triplet.lower().split(" ")[1] == older.lower()+" "+old.lower():
+            next_words.append([triplet, trigram_dict[triplet]])
+    if len(next_words) == 1:
+        next_word = next_words[0][0].split(" ")[2]
+    elif len(next_words) == 0:
         next_word = generate_from_bigrams(prev,bigram_dict)
     else:
-        total = 0
-        for pair in nextWords:
-            total += pair[1]
-        chosen = random.randint(1, total) - 1
-        searching = 0
-        index = 0
-        temp_word = ""
-        while searching < chosen:
-            temp_word = nextWords[index][0].split(" ")[2]
-            searching += nextWords[index][1]
-            index += 1
-        next_word = temp_word
+        candidates = []
+        for pair in next_words:
+            for frequency in range(0, pair[1]):
+                candidates.append(pair[0].split(" ")[2])
+        random.shuffle(candidates)
+        next_word = candidates[0]
     return next_word
 
 
-def generate():
-    with open('uni.pickle', 'rb') as handle:
-        unigram_dict = pickle.load(handle)
+def generate(tweets):
 
-    with open('bi.pickle', 'rb') as handle:
-        bigram_dict = pickle.load(handle)
+    random.shuffle(tweets)
 
-    with open('first.pickle', 'rb') as handle:
-        firstWords = pickle.load(handle)
-
-    with open('tri.pickle', 'rb') as handle:
-        trigram_dict = pickle.load(handle)
-
-    generated = False
+    bigram_dict, trigram_dict, firstWords = generate_ngrams.generate_ngrams(tweets[0:200])
 
     while True:
         written = ""
         written += firstWords[random.randint(0, len(firstWords)-1)]
 
-        while "terminate" not in written and "TERMINATE" not in written and "Terminate" not in written:
+        while "RETRYRETRY" not in written.upper() and "terminate" not in written.lower():
             generated = generate_next_word(written,bigram_dict,trigram_dict)
             written += " " + generated
 
+        if ("RETRYRETRY" not in written.upper()):
+            final = re.sub(" terminate| Terminate| TERMINATE", "", written)
+            final = final.rstrip()
 
-        final = re.sub(" terminate| Terminate| TERMINATE", "", written)
-        final = final.rstrip()
-        final = re.sub(" gon na ", " gonna ", final)
-        final = re.sub(" got ta ", " gotta ", final)
-        final = re.sub(" wan na ", " wanna ", final)
-        final = re.sub(" n't ", "n't ", final)
-        final = re.sub(" 've ", "'ve ", final)
-        final = re.sub(" 're ", "'re ", final)
-        final = re.sub(" im ", " I'm ", final)
-        final = re.sub(" i ", " I ", final)
-        final = final.capitalize()
-        if final.count(" ") > 1 and len(final) <= 85:
-            return final
+            # This first case needs to be cleaned up, but nltk makes "gonna" into 2 words, and this was causing trouble, so for now I replaced "gonna" in the cleaned_tweets.txt with this nonsense
+            final = re.sub("zpkeepmmmms", "gonna", final)
+            final = re.sub(" got ta ", " gotta ", final)
+            final = re.sub(" wan na ", " wanna ", final)
+            final = re.sub(" n't ", "n't ", final)
+            final = re.sub(" 've ", "'ve ", final)
+            final = re.sub(" 're ", "'re ", final)
+            final = re.sub(" im ", " I'm ", final)
+            final = re.sub(" ive ", " I've ", final)
+            final = re.sub(" i ", " I ", final)
+            if len(final) > 2:
+                final = final[0].capitalize()+final[1:]
+            if final.count(" ") > 1 and len(final) <= 85:
+                sub = False
+                for tweet in tweets:
+                    if final.upper() in tweet.upper():
+                        sub = True
+                if not sub:
+                    return final
