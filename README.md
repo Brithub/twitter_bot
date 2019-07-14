@@ -5,9 +5,9 @@ Hey all, I finally got around to posting the work for my twitter bot, or "Samula
 
 
 ### Files
-- cleaned_tweets.txt this (not included) file contains all the tweets you want to generate tweets from, this can be created using removeExesEtc.py or done manually
+- cleaned_tweets.txt this (not included) file contains all the tweets you want to generate tweets from, this is a text file containing all tweets to use separated by new lines. I would suggest using a tool like  [tweet dumper](https://github.com/marado/tweet_dumper) to get the needed tweets and using clean_text.py to make the tweets more usable for generation.
+- clean_text.py -- This is the main cleanup done in the project. Tweets are in english, and have all kinds of @s, hashtags, and general nonsenses, so this "class" basically tries to clean that up, and makes it more consistent to use in generating tweets
 - autoTweet.py -- This is the "main" file, basically it generates and tweets every interval. It should be noted that the parsing and cleaning isn't done in this step to reduce the load on the server. 
-- removeExesEtc -- This is the main cleanup done in the project. Tweets are in english, and have all kinds of @s, hashtags, and general nonsenses, so this "class" basically tries to clean that up, and put it into a nicer looking file named "cleaned_tweets.txt"
 - tweet -- this method tweets things, but you gotta have those sysenv set up correctly (Which is a lot of twitter boilerplate not fun)
 - generate_ngrams -- this method created bigrams of every word pair in cleaned_tweets, this is used in the generation.
 - main -- This is the testing main method, it runs everything and generates some tweets to look at. These aren't tweeted though
