@@ -4,12 +4,17 @@ import nltk
 def generate_ngrams(tweets):
     big = ""
     for line in tweets:
-        # print (line)
-        big+=line+" TERMINATE "
+        big += line + " TERMINATE "
     tokens = nltk.word_tokenize(big)
-    bigrams = nltk.ngrams(tokens, 2)
-    trigrams = nltk.ngrams(tokens, 3)
+    bigrams = []
+    trigrams = []
 
+    words_split = big.split(" ")
+    for i in range(0, len(words_split) - 2):
+        if words_split[i].lower() != 'terminate':
+            bigrams.append([words_split[i], words_split[i + 1]])
+            if words_split[i + 1].lower() != 'terminate':
+                trigrams.append([words_split[i], words_split[i + 1], words_split[i + 2]])
 
     bigram_dict = {}
     for pair in bigrams:
@@ -23,13 +28,12 @@ def generate_ngrams(tweets):
     trigram_dict = {}
     for trip in trigrams:
         key = trip[0].lower() + " " + trip[1].lower() + " " + trip[2].lower()
-        if len(trip[0]) <= 15 and len(trip[1]) <= 15 :
+        if len(trip[0]) <= 15 and len(trip[1]) <= 15:
             if "terminate" not in trip[0].lower():
                 if key.lower() in trigram_dict:
                     trigram_dict[key.lower()] = trigram_dict[key.lower()] + 1
                 else:
                     trigram_dict[key.lower()] = 1
-
 
     unigram_dict = {}
     for word in tokens:
@@ -48,10 +52,7 @@ def generate_ngrams(tweets):
     firstWords = []
     for tweet in tweets:
         word = tweet.split(" ")[0]
-        if len(word) <=15:
+        if len(word) <= 15:
             firstWords.append(word.lower())
 
-
-    return bigram_dict,trigram_dict,firstWords
-
-
+    return bigram_dict, trigram_dict, firstWords
