@@ -59,9 +59,13 @@ def generate_from_trigrams(prev, trigram_dict, bigram_dict):
 
 
 def generate(tweets):
-    random.shuffle(tweets)
 
-    bigram_dict, trigram_dict, firstWords = generate_ngrams.generate_ngrams(tweets[0:100])
+    user = random.randint(0,len(tweets)-1)
+    random.shuffle(tweets[user])
+
+    tweet_sample_size = 20
+
+    bigram_dict, trigram_dict, firstWords = generate_ngrams.generate_ngrams(tweets[user][0:tweet_sample_size])
 
     while True:
         written = ""
@@ -78,13 +82,6 @@ def generate(tweets):
             final = re.sub(" terminate| Terminate| TERMINATE", "", written)
             final = final.rstrip()
 
-            # This first case needs to be cleaned up, but nltk makes "gonna" into 2 words, and this was causing trouble, so for now I replaced "gonna" in the cleaned_tweets.txt with this nonsense
-            final = re.sub("zpkeepmmmms", "gonna", final)
-            final = re.sub(" got ta ", " gotta ", final)
-            final = re.sub(" wan na ", " wanna ", final)
-            final = re.sub(" n't ", "n't ", final)
-            final = re.sub(" 've ", "'ve ", final)
-            final = re.sub(" 're ", "'re ", final)
             final = re.sub(" im ", " I'm ", final)
             final = re.sub(" ive ", " I've ", final)
             final = re.sub(" i ", " I ", final)
@@ -93,8 +90,8 @@ def generate(tweets):
 
 
             if final.count(" ") > 1 and len(final) <= 85:
-                clean_sub = clean_text.clean_text(final[int(.20 * len(final)):len(final)])
-                for tweet in tweets[0:200]:
+                clean_sub = clean_text.clean_text(final[int(.20 * len(final)):int(len(final)*.80)])
+                for tweet in tweets[user][0:tweet_sample_size]:
                     if clean_sub.upper() in tweet.upper():
                         valid = False
                         # print ("\nnot tweeting:  ",clean_sub,"\nbecause it is in:  ",tweet,"\n")

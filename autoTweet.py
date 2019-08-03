@@ -1,3 +1,4 @@
+import glob
 import pickle
 import generate
 import time
@@ -7,13 +8,18 @@ import os.path
 
 time.sleep(20)
 
+files = glob.glob("databases/*.txt")
+
+tweets = []
+
+for user in files:
+    with open(user, 'r') as file:
+        text = file.read()
+    user_tweets = text.split("\n")
+    tweets.append(user_tweets)
+
 time_pickle_path = 'last.time.pickle'
 print('starting')
-path = "cleaned_tweets.txt"
-with open(path, 'r') as file:
-    text = file.read()
-tweets = text.split("\n")
-print("cleaned_tweets read")
 
 while True:
     wait_hours = 1.5

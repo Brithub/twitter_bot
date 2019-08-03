@@ -1,11 +1,16 @@
 import generate
-
+import glob
 
 def main():
-    path = "cleaned_tweets.txt"
-    with open(path, 'r') as file:
-        text = file.read()
-    tweets = text.split("\n")
+    files = glob.glob("databases/*.txt")
+
+    tweets = []
+
+    for user in files:
+        with open(user, 'r') as file:
+            text = file.read()
+        user_tweets = text.split("\n")
+        tweets.append(user_tweets)
 
     for i in range(15):
         print(generate.generate(tweets))
