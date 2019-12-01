@@ -1,7 +1,10 @@
+import os
+
 import nltk
 
 
 def generate_ngrams(tweets):
+    nltk.data.path.append(os.path.dirname(os.path.realpath(__file__))+"/nltk_data")
     big = ""
     for line in tweets:
         big += line + " TERMINATE "
@@ -49,10 +52,10 @@ def generate_ngrams(tweets):
         else:
             unigram_dict_cap[word] = 1
 
-    firstWords = []
+    first_words = []
     for tweet in tweets:
         word = tweet.split(" ")[0]
         if len(word) <= 15:
-            firstWords.append(word.lower())
+            first_words.append(word.lower())
 
-    return bigram_dict, trigram_dict, firstWords
+    return bigram_dict, trigram_dict, first_words

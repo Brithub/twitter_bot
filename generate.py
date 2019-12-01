@@ -80,23 +80,31 @@ def generate(tweets):
             valid = True
 
             final = re.sub(" terminate| Terminate| TERMINATE", "", written)
-            final = final.rstrip()
 
-            final = re.sub(" im ", " I'm ", final)
-            final = re.sub(" ive ", " I've ", final)
-            final = re.sub(" i ", " I ", final)
+            final = final.rstrip()
             if len(final) > 2:
                 final = final[0].capitalize() + final[1:]
 
 
-            if final.count(" ") > 1 and len(final) <= 85:
+            if final.count(" ") > 1 and len(final) <= 120:
                 clean_sub = clean_text.clean_text(final[int(.20 * len(final)):int(len(final)*.80)])
                 for tweet in tweets[user][0:tweet_sample_size]:
-                    if clean_sub.upper() in tweet.upper():
+                    base_words = tweet.upper().split(" ")
+                    base_words = list(dict.fromkeys(base_words))
+                    base_words.sort()
+
+                    generated_words = final.upper().split(" ")
+                    generated_words = list(dict.fromkeys(generated_words))
+                    generated_words.sort()
+
+                    if base_words == generated_words:
+                        valid = False
+                    if clean_text.clean_text(clean_sub).upper() in clean_text.clean_text(tweet).upper():
                         valid = False
                         # print ("\nnot tweeting:  ",clean_sub,"\nbecause it is in:  ",tweet,"\n")
             else:
                 valid = False
-
+            if final.count("\"") != 2 or final.count("\"") != 0:
+                final = re.sub("\"", "",final)
             if valid:
                 return final
