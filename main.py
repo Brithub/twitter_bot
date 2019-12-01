@@ -1,20 +1,36 @@
+import tweet_dumper
+from google.cloud import storage
+import datetime
+import tweet
 import generate
-import glob
+from utils import delete_blob, upload_blob, list_blobs
 
-def main():
-    files = glob.glob("databases/*.txt")
 
+def downloader_function(thing,thing2):
+    date = (datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).days
+    people = ["bijanmustard","7e5h","dadurath","sagebeans","spinebashed","theonion","clickhole"]
+    who = people[date % len(people)]
+    tweet_dumper.get_all_tweets(who)
+    delete_blob("twitter_bot_bucket",f"{who}-clean.txt")
+    upload_blob("twitter_bot_bucket",f"/tmp/{who}-clean.txt",f"{who}-clean.txt")
+
+
+def compose_and_send_tweet(thing, thing2):
+    files = list_blobs("twitter_bot_bucket")
     tweets = []
 
+    storage_client = storage.Client("Twitter bot")
+    bucket = storage_client.get_bucket("twitter_bot_bucket")
+
     for user in files:
-        with open(user, 'r') as file:
+        blob = bucket.blob(str(user.name))
+        blob.download_to_filename(f"/tmp/{user.name}")
+
+        with open(f"/tmp/{user.name}", 'r', encoding="utf-8") as file:
             text = file.read()
         user_tweets = text.split("\n")
         tweets.append(user_tweets)
 
-    for i in range(15):
-        print(generate.generate(tweets))
-
-
-if __name__ == '__main__':
-    main()
+    generated_tweet = generate.generate(tweets)
+    print(generated_tweet)
+    tweet.write_tweet(generated_tweet)
