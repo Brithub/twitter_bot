@@ -5,22 +5,22 @@ Hey all, I finally got around to posting the work for my twitter bot, or "Samula
 
 
 ### Files
-- cleaned_tweets.txt this (not included) file contains all the tweets you want to generate tweets from, this is a text file containing all tweets to use separated by new lines. I would suggest using a tool like  [tweet dumper](https://github.com/marado/tweet_dumper) to get the needed tweets and using clean_text.py to make the tweets more usable for generation.
-- clean_text.py -- This is the main cleanup done in the project. Tweets are in english, and have all kinds of @s, hashtags, and general nonsenses, so this "class" basically tries to clean that up, and makes it more consistent to use in generating tweets
-- autoTweet.py -- This is the "main" file, basically it generates and tweets every interval. It should be noted that the parsing and cleaning isn't done in this step to reduce the load on the server. 
-- tweet -- this method tweets things, but you gotta have those sysenv set up correctly (Which is a lot of twitter boilerplate not fun)
-- generate_ngrams -- this method created bigrams of every word pair in cleaned_tweets, this is used in the generation.
-- main -- This is the testing main method, it runs everything and generates some tweets to look at. These aren't tweeted though
-- generate.py -- this is what contains the logic for the tweets, note that the current randomly selected tweets is set at 200, the higher this number is, the less derivative the tweets are, but the more nonsensical they might get.
+- clean_text.py -- This is the main cleanup done in the project. Tweets are in english, and have all kinds of @s, hashtags, and general nonsenses, so this function basically tries to clean that up
+- tweet -- this method tweets things, but you gotta have those environment variables
+- generate_ngrams.py -- this method created bigrams and trigrams of tweets, this is used in the generation.
+- preview.py -- This is the testing main method, it runs everything and generates some tweets to look at. These aren't tweeted though. For this to work text files containing sample tweets need to be in a local 'databases' directory
+- generate.py -- this is what contains the logic for generating the tweets
+- utils.py -- Contains functions used in main.py
+- main.py -- This is the function code to be invoked
 
 ### Why?
 For fun 
 
 ### How can I run it?
 
-- Either download your csv per request to twitter and use removeExesEtc.py to turn it into cleaned_tweets.txt OR
-- Use a tool like [tweet dumper](https://github.com/marado/tweet_dumper) to get all of someone's public tweets and make your own cleaned_tweets.txt
-- Make a twitter app (This requires a whole application process takes time)
-- Set all the system env variables
-- Run main to test if it's generating everything correctly
-- Run autoTweet
+- This iteration of twitter_bot is actually much more ready out of the box!
+- First, get some twitter api keys, (needed for tweeting and downloading tweets), from the twitter api console
+- Second, get some ~~lambdas~~ google cloud functions set up using, with the api keys, twitter usernames, and buckets set for environment variables
+    - These cloud functions will construct and send tweets, or download the tweets, use methods in main.py as the function code
+- And third, use the cloud scheduler to set these functions to be invoked on whatever cadence is wanted
+- Then everything should be good to go, completely automated

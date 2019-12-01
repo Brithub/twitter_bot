@@ -1,1 +1,10 @@
-.txt
+# Default ignored files
+/workspace.xml
+.idea
+*.txt
+!requirements.txt
+*.csv
+*.json
+*.pickle
+!english.pickle
+*.zip
