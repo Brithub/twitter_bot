@@ -60,12 +60,21 @@ def generate_from_trigrams(prev, trigram_dict, bigram_dict):
 
 def generate(tweets):
 
-    user = random.randint(0,len(tweets)-1)
-    random.shuffle(tweets[user])
+    user = random.randint(0, len(tweets)-1)
 
-    tweet_sample_size = 20
+    tweet_pool = []
 
-    bigram_dict, trigram_dict, firstWords = generate_ngrams.generate_ngrams(tweets[user][0:tweet_sample_size])
+    if random.randint(0, 4) is 0:
+        tweet_pool = tweets[user]
+    else:
+        for person in tweets:
+            tweet_pool += person
+
+    random.shuffle(tweet_pool)
+
+    tweet_sample_size = 30
+
+    bigram_dict, trigram_dict, firstWords = generate_ngrams.generate_ngrams(tweet_pool[0:tweet_sample_size])
 
     while True:
         written = ""
@@ -88,7 +97,7 @@ def generate(tweets):
 
             if final.count(" ") > 1 and len(final) <= 120:
                 clean_sub = clean_text.clean_text(final[int(.20 * len(final)):int(len(final)*.80)])
-                for tweet in tweets[user][0:tweet_sample_size]:
+                for tweet in tweet_pool[0:tweet_sample_size]:
                     base_words = tweet.upper().split(" ")
                     base_words = list(dict.fromkeys(base_words))
                     base_words.sort()
