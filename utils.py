@@ -33,3 +33,19 @@ def delete_blob(bucket_name, blob_name):
     blob.delete()
 
     print('Blob {} deleted.'.format(blob_name))
+
+
+def get_blob(bucket_name, key, destination):
+    storage_client = storage.Client()
+
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(key)
+    blob.download_to_filename(destination)
+
+
+def get_bad_phrases(bucket, key):
+    get_blob(bucket, key, "/tmp/temp_bad_words.txt")
+    f = open("/tmp/temp_bad_words.txt", "r")
+    content = f.read()
+    f.close()
+    return content.split("\n")
