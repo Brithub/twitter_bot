@@ -1,6 +1,7 @@
 import generate
 import glob
 
+
 def main():
     files = glob.glob("databases/*.txt")
 

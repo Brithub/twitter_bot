@@ -3,6 +3,13 @@ import re
 import clean_text
 import generate_ngrams
 import random
+import os
+from utils import get_bad_phrases
+
+bucket = os.environ['BUCKET']
+
+temp_path = "/tmp/badwords.txt"
+key = "badwords.txt"
 
 
 def generate_next_word(written, bigram_dict, trigram_dict):
@@ -59,8 +66,9 @@ def generate_from_trigrams(prev, trigram_dict, bigram_dict):
 
 
 def generate(tweets):
+    user = random.randint(0, len(tweets) - 1)
 
-    user = random.randint(0, len(tweets)-1)
+    bad_phrases = get_bad_phrases(bucket, key)
 
     tweet_pool = []
 
@@ -94,9 +102,8 @@ def generate(tweets):
             if len(final) > 2:
                 final = final[0].capitalize() + final[1:]
 
-
             if final.count(" ") > 1 and len(final) <= 120:
-                clean_sub = clean_text.clean_text(final[int(.20 * len(final)):int(len(final)*.80)])
+                clean_sub = clean_text.clean(final[int(.20 * len(final)):int(len(final) * .80)])
                 for tweet in tweet_pool[0:tweet_sample_size]:
                     base_words = tweet.upper().split(" ")
                     base_words = list(dict.fromkeys(base_words))
@@ -108,12 +115,15 @@ def generate(tweets):
 
                     if base_words == generated_words:
                         valid = False
-                    if clean_text.clean_text(clean_sub).upper() in clean_text.clean_text(tweet).upper():
+                    if clean_text.clean(clean_sub).upper() in clean_text.clean(tweet).upper():
                         valid = False
                         # print ("\nnot tweeting:  ",clean_sub,"\nbecause it is in:  ",tweet,"\n")
+                    for phrase in bad_phrases:
+                        if phrase.upper() in tweet.upper():
+                            valid = False
             else:
                 valid = False
             if final.count("\"") != 2 or final.count("\"") != 0:
-                final = re.sub("\"", "",final)
+                final = re.sub("\"", "", final)
             if valid:
                 return final

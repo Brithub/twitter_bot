@@ -3,7 +3,7 @@ import re
 import json
 
 
-def clean_text(edited):
+def clean(edited):
 
     edited = re.sub("^(RT|rt) .*", "", edited)
     edited = re.sub("^@.*", "", edited)
