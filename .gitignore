@@ -8,3 +8,7 @@
 *.pickle
 !english.pickle
 *.zip
+*.pyc
+nltk_data/*.*
+.DS_Store
+venv/

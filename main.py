@@ -8,7 +8,7 @@ from utils import delete_blob, upload_blob, list_blobs
 
 def downloader_function(thing,thing2):
     date = (datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).days
-    people = ["bijanmustard","7e5h","dadurath","sagebeans","spinebashed","theonion","clickhole"]
+    people = ["bijanmustard","7e5h","dadurath","daftlimmy","theonion","clickhole"]
     who = people[date % len(people)]
     tweet_dumper.get_all_tweets(who)
     delete_blob("twitter_bot_bucket",f"{who}-clean.txt")
