@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html *
+{
+   font-size: 1em !important;
+   color: #000 !important;
+   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+table.blueTable {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  background-color: #EEEEEE;
+  width: 100%;
+  height: 200px;
+  text-align: left;
+}
+table.blueTable td, table.blueTable th {
+  padding: 3px 2px;
+}
+table.blueTable tbody td {
+  font-size: 13px;
+}
+table.blueTable tr:nth-child(even) {
+  background: #D0E4F5;
+}
+table.blueTable tfoot td {
+  font-size: 14px;
+}
+table.blueTable tfoot .links {
+  text-align: right;
+}
+table.blueTable tfoot .links a{
+  display: inline-block;
+  background: #1C6EA4;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+</style>
+</head>
+<body>
+
+<h2>This is the tool for excluding phrases/words for boy_eBooks</h2>
+
+<form>
+  <label for="message">Add filter:</label><br>
+  <input type="text" id="message" name="filter"><br>
+</form>
+<button onclick="sendPhrase()">Submit</button>
+
+<p>Here's what's been added so far:</p>
+<table class="blueTable" id="demo"></table>
+
+<script>
+var endpoint = ""
+function sendPhrase(){
+    if(document.getElementById('message').value == ""){
+      window.alert("Please enter something...")
+      return
+    }
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", endpoint, true);
+    xhttp.setRequestHeader("Content-type", "application/json");
+
+    xhttp.onreadystatechange = function() { // Call a function when the state changes.
+
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            document.getElementById("demo").innerHTML = content();
+            document.getElementById('message').value = ''
+        }
+    }
+
+    xhttp.send(JSON.stringify({"message": document.getElementById('message').value}));
+}
+function content() {
+var storedText;
+fetch(endpoint)
+  .then(function(response) {
+    response.text().then(function(text) {
+      storedText = text.split("\n");
+      print
+      done();
+    });
+  });
+
+    function done() {
+      document.getElementById('demo').innerHTML = makeTableHTML(storedText.reverse());
+    }
+}
+function makeTableHTML(myArray) {
+    var result = "<table border=1>";
+    for(var i=0; i<myArray.length; i++) {
+        result += "<tr><td>"+myArray[i]+"</td>";
+        result += "</tr>";
+    }
+    result += "</table>";
+
+    return result;
+}
+
+document.getElementById("demo").innerHTML = content();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+html *
+{
+   color: #000 !important;
+   font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+table.blueTable {
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  background-color: #EEEEEE;
+  width: 100%;
+  height: 200px;
+  text-align: left;
+}
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -70%);
+}
+.centerTitle {
+  position: absolute;
+  text-align: center;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+   font-size: 3em;
+}
+</style>
+</head>
+<body>
+
+<h1 class="centerTitle" id="theTitle">This is the tool for excluding phrases/words for boy_eBooks</h1>
+<div class="center">
+
+
+<form>
+  <label for="message">Add filter:</label><br>
+  <input type="text" id="message" name="filter"><br>
+</form>
+<button id="theButton" onclick="sendPhrase()">Submit</button>
+</div>
+
+<script>
+var endpoint = ""
+function sendPhrase(){
+    document.getElementById("theButton").disabled = true;
+    if(document.getElementById('message').value == ""){
+      window.alert("Please enter something...")
+      return
+    }
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("POST", endpoint, true);
+    xhttp.setRequestHeader("Content-type", "application/json");
+
+    xhttp.onreadystatechange = function() { // Call a function when the state changes.
+
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            window.alert("Added " + document.getElementById('message').value + ".   ")
+            document.getElementById("theButton").disabled = false;
+            document.getElementById('message').value = ''
+            document.getElementById('theTitle').innerHTML = 'This has been the tool for excluding phrases/words for boy_eBooks... thank you'
+        }
+    }
+
+    xhttp.send(JSON.stringify({"message": document.getElementById('message').value}));
+}
+
+
+
+document.getElementById("demo").innerHTML = content();
+</script>
+
+</body>
+</html>
+
