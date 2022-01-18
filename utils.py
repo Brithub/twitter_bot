@@ -1,4 +1,9 @@
 from google.cloud import storage
+from nltk import word_tokenize, pos_tag
+from nltk import Tree
+from nltk import RegexpParser
+from google_images_search import GoogleImagesSearch
+import os
 
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
@@ -49,3 +54,48 @@ def get_bad_phrases(bucket, key):
     content = f.read()
     f.close()
     return content.split("\n")
+
+
+def get_subject(phrase):
+    NP = "NP: {(<V\w+>|<NN\w?>)+.*<NN\w?>}"
+    chunker = RegexpParser(NP)
+    parse = chunker.parse
+    chunked = parse(pos_tag(word_tokenize(phrase)))
+    continuous_chunk = []
+    current_chunk = []
+
+    for subtree in chunked:
+        if type(subtree) == Tree:
+            current_chunk.append(" ".join([token for token, pos in subtree.leaves()]))
+        elif current_chunk:
+            named_entity = " ".join(current_chunk)
+            if named_entity not in continuous_chunk:
+                continuous_chunk.append(named_entity)
+                current_chunk = []
+        else:
+            continue
+
+    return continuous_chunk
+
+
+def download_image(query):
+
+    # you can provide API key and CX using arguments,
+    # or you can set environment variables: GCS_DEVELOPER_KEY, GCS_CX
+
+    consumer_key = os.environ['SEARCH_KEY']
+    consumer_secret = os.environ['SEARCH_CX']
+
+    gis = GoogleImagesSearch(consumer_key, consumer_secret)
+
+    # define search params:
+
+    _search_params = {
+        'q': query,
+        'num': 1,
+        'fileType': 'jpg',
+        'safe': 'medium'
+    }
+
+    # this will search, download and resize:
+    gis.search(search_params=_search_params, path_to_dir="/tmp/", custom_image_name=query)

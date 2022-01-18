@@ -3,7 +3,7 @@ import os
 import tweepy
 
 
-def write_tweet(text):
+def setup():
     # == OAuth Authentication ==
     #
     # This mode of authentication is the new preferred way
@@ -23,10 +23,14 @@ def write_tweet(text):
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
 
-    api = tweepy.API(auth)
+    return tweepy.API(auth)
 
 
-    # If the application settings are set for "Read and Write" then
-    # this line should tweet out the message to your account's
-    # timeline. The "Read and Write" setting is on https://dev.twitter.com/apps
+def write_tweet(text):
+    api = setup()
     api.update_status(status=text)
+
+
+def write_image_tweet(image_path, text):
+    api = setup()
+    api.update_with_media(image_path, text)

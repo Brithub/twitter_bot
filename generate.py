@@ -22,17 +22,17 @@ def generate_next_word(written, bigram_dict, trigram_dict):
 
 def generate_from_bigrams(prev, bigram_dict):
     last_word = prev.split(" ")[-1]
-    nextWords = []
+    next_words = []
     for pair in bigram_dict:
         if pair.lower().split(" ")[0] == last_word.lower():
-            nextWords.append([pair, bigram_dict[pair]])
-    if len(nextWords) == 1:
-        next_word = nextWords[0][0].split(" ")[1]
-    elif len(nextWords) == 0:
+            next_words.append([pair, bigram_dict[pair]])
+    if len(next_words) == 1:
+        next_word = next_words[0][0].split(" ")[1]
+    elif len(next_words) == 0:
         next_word = "RETRYRETRY"
     else:
         candidates = []
-        for pair in nextWords:
+        for pair in next_words:
             for frequency in range(0, pair[1]):
                 candidates.append(pair[0].split(" ")[1])
         random.shuffle(candidates)
