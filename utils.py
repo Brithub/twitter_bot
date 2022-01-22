@@ -4,6 +4,7 @@ from nltk import Tree
 from nltk import RegexpParser
 from google_images_search import GoogleImagesSearch
 import os
+import re
 
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
@@ -99,3 +100,33 @@ def download_image(query):
 
     # this will search, download and resize:
     gis.search(search_params=_search_params, path_to_dir="/tmp/", custom_image_name=query)
+
+
+def clean_text(edited):
+    """
+    This is the main text cleanup done in the project.
+    Tweets are in english, and have all kinds of @s, hashtags, and general nonsenses
+    This function basically tries to clean that up
+    """
+    edited = re.sub("^(RT|rt) .*", "", edited)
+    edited = re.sub("^@.*", "", edited)
+    edited = re.sub("@", "", edited)
+    edited = re.sub("“", "\"", edited)
+    edited = re.sub("”", "\"", edited)
+    edited = re.sub(r"^(@\w?[^\s]+)(.@\w?[^\s]+)*", "", edited)
+    edited = re.sub(r"^\"(@\w?[^\s]+)(.@\w?[^\s]+)*", "", edited)
+    edited = re.sub("\n", " ", edited)
+    edited = re.sub(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", "", edited)
+    edited = re.sub("-", " ", edited)
+    edited = re.sub("\\\\", " ", edited)
+    edited = re.sub("/", " ", edited)
+    edited = re.sub("^ ", "", edited)
+    edited = re.sub(r"^ +", "", edited)
+    edited = re.sub(r" $", "", edited)
+    edited = re.sub("/", " ", edited)
+    edited = re.sub(" {2}", " ", edited)
+    edited = re.sub("^ ", "", edited)
+    edited = re.sub(r"^ +", "", edited)
+    edited = re.sub(r" $", "", edited)
+
+    return edited

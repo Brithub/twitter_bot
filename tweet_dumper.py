@@ -2,10 +2,14 @@
 # encoding: utf-8
 # Taken from https://github.com/marado/tweet_dumper with minimum case-specific modifications
 
-import tweepy  # https://github.com/tweepy/tweepy
-import clean_text
+import datetime
+import logging
 import os
-from utils import get_bad_phrases
+
+import tweepy  # https://github.com/tweepy/tweepy
+
+from utils import delete_blob, upload_blob, get_blob
+from utils import get_bad_phrases, clean_text
 
 # Twitter API credentials
 consumer_key = os.environ['CONSUMER_KEY']
@@ -16,6 +20,21 @@ bucket = os.environ['BUCKET']
 
 temp_path = "/tmp/badwords.txt"
 key = "badwords.txt"
+
+
+def downloader_function(thing, thing2):
+    date = (datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).days
+    people = ["bijanmustard","7e5h","dadurath","daftlimmy","theonion","clickhole"]
+    who = people[date % len(people)]
+    full = get_all_tweets(who)
+    logging.info("Got some tweets:" + full[0:300] + "...")
+    try:
+        blob = get_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
+        delete_blob("twitter_bot_bucket", f"{who}-clean.txt")
+    except Exception as e:
+        # We could check if that blob exists.... or this
+        print('Ain\'t it')
+    upload_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
 
 
 def get_all_tweets(screen_name):
@@ -64,7 +83,7 @@ def get_all_tweets(screen_name):
             if phrase in raw:
                 raw = ""
 
-        cleaned = clean_text.clean(raw)
+        cleaned = clean_text(raw)
 
         if cleaned != "":
             final_list += (cleaned + "\n")
@@ -73,4 +92,4 @@ def get_all_tweets(screen_name):
 
 
 if __name__ == '__main__':
-    print(get_all_tweets("7e5h"))
+    downloader_function(None, None)

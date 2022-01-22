@@ -1,15 +1,46 @@
 import re
 
-import clean_text
 import generate_ngrams
 import random
 import os
-from utils import get_bad_phrases
+import tweet
+from utils import list_blobs, get_subject, download_image, get_bad_phrases, clean_text
+from google.cloud import storage
 
 bucket = os.environ['BUCKET']
 
 temp_path = "/tmp/badwords.txt"
 key = "badwords.txt"
+
+
+def compose_and_send_tweet(thing, thing2):
+    files = list_blobs("twitter_bot_bucket")
+    tweets = []
+
+    storage_client = storage.Client("Twitter bot")
+    bucket = storage_client.get_bucket("twitter_bot_bucket")
+
+    for user in files:
+        if user.name != "badwords.txt":
+            blob = bucket.blob(str(user.name))
+            blob.download_to_filename(f"/tmp/{user.name}")
+
+            with open(f"/tmp/{user.name}", 'r', encoding="utf-8") as file:
+                text = file.read()
+            user_tweets = text.split("\n")
+            tweets.append(user_tweets)
+
+    generated_tweet = generate(tweets)
+    print(generated_tweet)
+    subject = get_subject(generated_tweet)
+    if len(subject) > 0 and random.randint(0, 100) > 80:
+        print(f"getting image for {subject[0]}")
+        download_image(subject[0])
+        tweet.write_image_tweet(f'/tmp/{subject[0]}.jpg', generated_tweet)
+        print("skipping with image")
+    else:
+        tweet.write_tweet(generated_tweet)
+        print("skipping")
 
 
 def generate_next_word(written, bigram_dict, trigram_dict):
@@ -92,18 +123,18 @@ def generate(tweets):
             generated = generate_next_word(written, bigram_dict, trigram_dict)
             written += " " + generated
 
-        if ("RETRYRETRY" not in written.upper()):
+        if "RETRYRETRY" not in written.upper():
 
             valid = True
 
-            final = re.sub(" terminate| Terminate| TERMINATE", "", written)
+            final = re.sub(' terminate| Terminate| TERMINATE', "", written)
 
             final = final.rstrip()
             if len(final) > 2:
                 final = final[0].capitalize() + final[1:]
 
             if final.count(" ") > 1 and len(final) <= 120:
-                clean_sub = clean_text.clean(final[int(.20 * len(final)):int(len(final) * .80)])
+                clean_sub = clean_text(final[int(.20 * len(final)):int(len(final) * .80)])
                 for tweet in tweet_pool[0:tweet_sample_size]:
                     base_words = tweet.upper().split(" ")
                     base_words = list(dict.fromkeys(base_words))
@@ -115,7 +146,7 @@ def generate(tweets):
 
                     if base_words == generated_words:
                         valid = False
-                    if clean_text.clean(clean_sub).upper() in clean_text.clean(tweet).upper():
+                    if clean_text(clean_sub).upper() in clean_text(tweet).upper():
                         valid = False
                         # print ("\nnot tweeting:  ",clean_sub,"\nbecause it is in:  ",tweet,"\n")
                     for phrase in bad_phrases:
@@ -127,3 +158,8 @@ def generate(tweets):
                 final = re.sub("\"", "", final)
             if valid:
                 return final
+
+
+if __name__ == '__main__':
+    compose_and_send_tweet(None, None)
+
