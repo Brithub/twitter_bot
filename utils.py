@@ -2,6 +2,7 @@ from google.cloud import storage
 from nltk import word_tokenize, pos_tag
 from nltk import Tree
 from nltk import RegexpParser
+import nltk
 from google_images_search import GoogleImagesSearch
 import os
 import re
@@ -58,6 +59,8 @@ def get_bad_phrases(bucket, key):
 
 
 def get_subject(phrase):
+    nltk.download('punkt')
+    nltk.download('averaged_perceptron_tagger')
     NP = "NP: {(<V\w+>|<NN\w?>)+.*<NN\w?>}"
     chunker = RegexpParser(NP)
     parse = chunker.parse
