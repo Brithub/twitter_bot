@@ -36,10 +36,10 @@ def compose_and_send_tweet(thing, thing2):
     if len(subject) > 0 and random.randint(0, 100) > 80:
         print(f"getting image for {subject[0]}")
         download_image(subject[0])
-        tweet.write_image_tweet(f'/tmp/{subject[0]}.jpg', generated_tweet)
+        # tweet.write_image_tweet(f'/tmp/{subject[0]}.jpg', generated_tweet)
         print("skipping with image")
     else:
-        tweet.write_tweet(generated_tweet)
+        # tweet.write_tweet(generated_tweet)
         print("skipping")
 
 

@@ -1,14 +1,9 @@
-import os
-
-import nltk
 
 
 def generate_ngrams(tweets):
-    nltk.data.path.append(os.path.dirname(os.path.realpath(__file__))+"/nltk_data")
     big = ""
     for line in tweets:
         big += line + " TERMINATE "
-    tokens = nltk.word_tokenize(big)
     bigrams = []
     trigrams = []
 
@@ -39,14 +34,14 @@ def generate_ngrams(tweets):
                     trigram_dict[key.lower()] = 1
 
     unigram_dict = {}
-    for word in tokens:
+    for word in words_split:
         if word in unigram_dict:
             unigram_dict[word.lower()] = unigram_dict[word.lower()] + 1
         else:
             unigram_dict[word.lower()] = 1
 
     unigram_dict_cap = {}
-    for word in tokens:
+    for word in words_split:
         if word in unigram_dict_cap:
             unigram_dict_cap[word] = unigram_dict_cap[word] + 1
         else:

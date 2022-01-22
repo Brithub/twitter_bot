@@ -64,8 +64,11 @@ def get_subject(phrase):
     chunked = parse(pos_tag(word_tokenize(phrase)))
     continuous_chunk = []
     current_chunk = []
+    backup = []
 
     for subtree in chunked:
+        if type(subtree) == tuple and subtree[1] == "NN":
+            backup.append(subtree[0])
         if type(subtree) == Tree:
             current_chunk.append(" ".join([token for token, pos in subtree.leaves()]))
         elif current_chunk:
@@ -76,13 +79,13 @@ def get_subject(phrase):
         else:
             continue
 
+    if len(continuous_chunk) is 0:
+        return backup
+
     return continuous_chunk
 
 
 def download_image(query):
-
-    # you can provide API key and CX using arguments,
-    # or you can set environment variables: GCS_DEVELOPER_KEY, GCS_CX
 
     consumer_key = os.environ['SEARCH_KEY']
     consumer_secret = os.environ['SEARCH_CX']
