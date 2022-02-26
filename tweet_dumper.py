@@ -24,7 +24,7 @@ key = "badwords.txt"
 
 def downloader_function(thing, thing2):
     date = (datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).days
-    people = ["bijanmustard","7e5h","dadurath","daftlimmy","theonion","clickhole"]
+    people = ["bijanmustard","7e5h","dadurath","theonion","clickhole"]
     who = people[date % len(people)]
     full = get_all_tweets(who)
     logging.info("Got some tweets:" + full[0:300] + "...")

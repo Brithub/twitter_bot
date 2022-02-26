@@ -32,13 +32,13 @@ def compose_and_send_tweet(thing, thing2):
     generated_tweet = generate(tweets)
     print(generated_tweet)
     subject = get_subject(generated_tweet)
-    if len(subject) > 0 and random.randint(0, 100) > 80:
+    if len(subject) > 0 and len(subject[0]) > 3 and subject[0][0] != '\'' and random.randint(0, 100) > 60:
         print(f"getting image for: {subject[0]}")
-        # download_image(subject[0])
-        # tweet.write_image_tweet(f'/tmp/{subject[0]}.jpg', generated_tweet)
+        download_image(subject[0])
+        tweet.write_image_tweet(f'/tmp/{subject[0]}.jpg', generated_tweet)
     else:
         print("No nouns found")
-        # tweet.write_tweet(generated_tweet)
+        tweet.write_tweet(generated_tweet)
 
 
 def generate_next_word(written, bigram_dict, trigram_dict):
@@ -100,62 +100,55 @@ def generate(tweets):
     bad_phrases = get_bad_phrases(bucket, key)
 
     tweet_pool = []
-
-    if random.randint(0, 4) is 0:
-        tweet_pool = tweets[user]
-    else:
-        for person in tweets:
-            tweet_pool += person
-
-    random.shuffle(tweet_pool)
-
-    tweet_sample_size = 30
-
-    bigram_dict, trigram_dict, firstWords = generate_ngrams(tweet_pool[0:tweet_sample_size])
+    for item in tweets:
+        for sub_item in item:
+            tweet_pool.append(sub_item)
 
     while True:
-        written = ""
-        written += firstWords[random.randint(0, len(firstWords) - 1)]
+        attempts = 5
 
-        while "RETRYRETRY" not in written.upper() and "terminate" not in written.lower():
-            generated = generate_next_word(written, bigram_dict, trigram_dict)
-            written += " " + generated
+        random.shuffle(tweet_pool)
+        tweet_sample_size = 30
 
-        if "RETRYRETRY" not in written.upper():
+        bigram_dict, trigram_dict, first_words = generate_ngrams(tweet_pool[0:tweet_sample_size])
+        while attempts > 0:
+            attempts = attempts - 1
+            written = ""
+            written += first_words[random.randint(0, len(first_words) - 1)]
 
-            valid = True
+            while "RETRYRETRY" not in written.upper() and "terminate" not in written.lower():
+                generated = generate_next_word(written, bigram_dict, trigram_dict)
+                written += " " + generated
 
-            final = re.sub(' terminate| Terminate| TERMINATE', "", written)
+            if "RETRYRETRY" not in written.upper():
 
-            final = final.rstrip()
-            if len(final) > 2:
-                final = final[0].capitalize() + final[1:]
+                valid = True
 
-            if final.count(" ") > 1 and len(final) <= 120:
-                clean_sub = clean_text(final[int(.20 * len(final)):int(len(final) * .80)])
-                for tweet in tweet_pool[0:tweet_sample_size]:
-                    base_words = tweet.upper().split(" ")
-                    base_words = list(dict.fromkeys(base_words))
-                    base_words.sort()
+                final = re.sub(' terminate| Terminate| TERMINATE', "", written)
 
-                    generated_words = final.upper().split(" ")
-                    generated_words = list(dict.fromkeys(generated_words))
-                    generated_words.sort()
+                final = final.rstrip()
+                if len(final) > 2:
+                    final = final[0].capitalize() + final[1:]
 
-                    if base_words == generated_words:
-                        valid = False
-                    if clean_text(clean_sub).upper() in clean_text(tweet).upper():
-                        valid = False
-                        # print ("\nnot tweeting:  ",clean_sub,"\nbecause it is in:  ",tweet,"\n")
-                    for phrase in bad_phrases:
-                        if phrase.upper() in tweet.upper():
+                if final.count(" ") > 1 and len(final) <= 120:
+                    subset_of_final = " ".join(final.split(" ")[int(len(final.split(" ")) * .40):])
+                    for source_tweet in tweet_pool[:tweet_sample_size]:
+                        base_words = set(clean_text(source_tweet).upper().split(" "))
+                        generated_words = set(clean_text(subset_of_final).upper().split(" "))
+
+                        if generated_words.issubset((base_words)):
                             valid = False
-            else:
-                valid = False
-            if final.count("\"") != 2 or final.count("\"") != 0:
-                final = re.sub("\"", "", final)
-            if valid:
-                return final
+                            # print("not tweeting:  ", final, " because it is in:  ", source_tweet)
+
+                        for phrase in bad_phrases:
+                            if phrase.upper() in source_tweet.upper():
+                                valid = False
+                else:
+                    valid = False
+                if final.count("\"") != 2 or final.count("\"") != 0:
+                    final = re.sub("\"", "", final)
+                if valid:
+                    return final
 
 def generate_ngrams(tweets):
     big = ""
