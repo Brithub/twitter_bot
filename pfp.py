@@ -45,10 +45,10 @@ def generate_and_update_pfp(x,y):
                                 boy_pixels[i, j] = new_pixel(boy_pixels[i,j],sky_color,calculate_opacity_ratio(i,j,sky_pixels))
                             elif hat_pixels[i,j][3] > 1:
                                 boy_pixels[i, j] = new_pixel(boy_pixels[i,j],hat_color, calculate_opacity_ratio(i,j,hat_pixels))
-                    boys.show()
-                    boys.save("generated.png")
+                    # boys.show()
+                    boys.save("/tmp/generated.png")
 
 
 if __name__ == '__main__':
     generate_and_update_pfp(None, None)
-    update_image("generated.png")
+    update_image("/tmp/generated.png")
