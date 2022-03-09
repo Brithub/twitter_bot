@@ -26,4 +26,4 @@ def write_image_tweet(image_path, text):
 
 def update_image(path):
     spi = setup()
-    spi.update_profile_image(path)
+    return spi.update_profile_image(path)

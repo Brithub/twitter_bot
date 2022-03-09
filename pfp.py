@@ -47,8 +47,8 @@ def generate_and_update_pfp(x,y):
                                 boy_pixels[i, j] = new_pixel(boy_pixels[i,j],hat_color, calculate_opacity_ratio(i,j,hat_pixels))
                     # boys.show()
                     boys.save("/tmp/generated.png")
+                    return update_image("/tmp/generated.png")
 
 
 if __name__ == '__main__':
     generate_and_update_pfp(None, None)
-    update_image("/tmp/generated.png")

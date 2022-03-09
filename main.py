@@ -12,4 +12,4 @@ def compose_and_send_tweet(thing, thing2):
 
 
 def generate_and_update_pfp(x, y):
-    pfp.generate_and_update_pfp(x,y)
+    return pfp.generate_and_update_pfp(x,y)
