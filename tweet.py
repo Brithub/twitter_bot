@@ -23,3 +23,7 @@ def write_tweet(text):
 def write_image_tweet(image_path, text):
     api = setup()
     api.update_status_with_media(text, image_path)
+
+def update_image(path):
+    spi = setup()
+    spi.update_profile_image(path)
