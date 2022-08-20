@@ -35,6 +35,7 @@ def downloader_function(thing, thing2):
         # We could check if that blob exists.... or this
         print("Ain't it")
     upload_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
+    return(f"Got {len(full)} tweets for {who}")
 
 
 def get_all_tweets(screen_name):

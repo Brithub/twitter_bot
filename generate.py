@@ -39,6 +39,7 @@ def compose_and_send_tweet(thing, thing2):
     else:
         print("No nouns found")
         tweet.write_tweet(generated_tweet)
+    return generated_tweet
 
 
 def generate_next_word(written, bigram_dict, trigram_dict):
