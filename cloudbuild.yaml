@@ -7,7 +7,7 @@ steps:
   - tweet-inline
   - --region=us-central1
   - --source=./functions
-  - --trigger-pubsub
+  - --trigger-topic=tweet
   - --runtime=python37
   - --entry-point=compose_and_send_tweet
-  - --set-secrets=ACCESS_TOKEN=projects/756522570430/secrets/ACCESS_TOKEN/versions/latest;ACCESS_TOKEN_SECRET=projects/756522570430/secrets/ACCESS_TOKEN_SECRET/versions/latest;BUCKET=projects/756522570430/secrets/BUCKET/versions/latest;CONSUMER_KEY=projects/756522570430/secrets/CONSUMER_KEY/versions/latest;CONSUMER_SECRET=projects/756522570430/secrets/CONSUMER_SECRET/versions/latest;SEARCH_CX=projects/756522570430/secrets/SEARCH_CX/versions/latest;SEARCH_KEY=projects/756522570430/secrets/SEARCH_KEY/versions/latest
+  - --set-secrets="ACCESS_TOKEN=projects/756522570430/secrets/ACCESS_TOKEN/versions/latest;ACCESS_TOKEN_SECRET=projects/756522570430/secrets/ACCESS_TOKEN_SECRET/versions/latest;BUCKET=projects/756522570430/secrets/BUCKET/versions/latest;CONSUMER_KEY=projects/756522570430/secrets/CONSUMER_KEY/versions/latest;CONSUMER_SECRET=projects/756522570430/secrets/CONSUMER_SECRET/versions/latest;SEARCH_CX=projects/756522570430/secrets/SEARCH_CX/versions/latest;SEARCH_KEY=projects/756522570430/secrets/SEARCH_KEY/versions/latest"
