@@ -6,7 +6,6 @@ steps:
   - deploy
   - tweet-inline
   - --region=us-central1
-  - --source=./functions
   - --trigger-topic=tweet
   - --runtime=python37
   - --entry-point=compose_and_send_tweet
