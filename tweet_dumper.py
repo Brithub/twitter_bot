@@ -24,8 +24,8 @@ people = ["bijanmustard", "7e5h", "dadurath", "armaan__zi", "theonion", "clickho
 
 
 def downloader_function(thing, thing2):
-    date = (datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).days
-    who = people[date % len(people)]
+    hour = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds() / 3600)
+    who = people[hour % len(people)]
     full = get_all_tweets(who)
     logging.info("Got some tweets:" + full[0:300] + "...")
     try:
@@ -105,5 +105,5 @@ def get_all_tweets(screen_name):
 
 
 if __name__ == '__main__':
-    # downloader_function(None, None)
-    get_all_tweets("7e5h")
+    downloader_function(None, None)
+    # get_all_tweets("7e5h")
