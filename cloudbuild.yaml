@@ -1,5 +1,5 @@
 steps:
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+- name: 'Deploy Tweet'
   args:
   - gcloud
   - functions
@@ -9,6 +9,24 @@ steps:
   - --trigger-topic=tweet
   - --runtime=python37
   - --entry-point=compose_and_send_tweet
+  - --set-secrets=ACCESS_TOKEN=projects/756522570430/secrets/ACCESS_TOKEN/versions/latest
+  - --set-secrets=ACCESS_TOKEN_SECRET=projects/756522570430/secrets/ACCESS_TOKEN_SECRET/versions/latest
+  - --set-secrets=BUCKET=projects/756522570430/secrets/BUCKET/versions/latest
+  - --set-secrets=CONSUMER_KEY=projects/756522570430/secrets/CONSUMER_KEY/versions/latest
+  - --set-secrets=CONSUMER_SECRET=projects/756522570430/secrets/CONSUMER_SECRET/versions/latest
+  - --set-secrets=SEARCH_CX=projects/756522570430/secrets/SEARCH_CX/versions/latest
+  - --set-secrets=SEARCH_KEY=projects/756522570430/secrets/SEARCH_KEY/versions/latest
+
+- name: 'Deploy Download'
+  args:
+  - gcloud
+  - functions
+  - deploy
+  - download-inline
+  - --region=us-central1
+  - --trigger-topic=download
+  - --runtime=python37
+  - --entry-point=downloader_function
   - --set-secrets=ACCESS_TOKEN=projects/756522570430/secrets/ACCESS_TOKEN/versions/latest
   - --set-secrets=ACCESS_TOKEN_SECRET=projects/756522570430/secrets/ACCESS_TOKEN_SECRET/versions/latest
   - --set-secrets=BUCKET=projects/756522570430/secrets/BUCKET/versions/latest
