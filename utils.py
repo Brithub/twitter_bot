@@ -114,7 +114,7 @@ def clean_text(edited):
     Tweets are in english, and have all kinds of @s, hashtags, and general nonsenses
     This function basically tries to clean that up
     """
-    edited = re.sub("^(RT|rt) .*", "", edited)
+    edited = re.sub(r"^(RT|rt) @[^ ]*", "", edited)
     edited = re.sub("^@.*", "", edited)
     edited = re.sub("@", "", edited)
     edited = re.sub("“", "\"", edited)

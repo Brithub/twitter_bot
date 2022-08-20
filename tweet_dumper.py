@@ -29,11 +29,11 @@ def downloader_function(thing, thing2):
     full = get_all_tweets(who)
     logging.info("Got some tweets:" + full[0:300] + "...")
     try:
-        blob = get_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
+        get_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
         delete_blob("twitter_bot_bucket", f"{who}-clean.txt")
     except Exception as e:
         # We could check if that blob exists.... or this
-        print('Ain\'t it')
+        print("Ain't it")
     upload_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
 
 
@@ -56,7 +56,7 @@ def get_all_tweets(screen_name):
     oldest = all_tweets[-1].id - 1
 
     # keep grabbing tweets until there are no tweets left to grab
-    while len(new_tweets) > 750:
+    while len(all_tweets) < 750:
         print("getting tweets before %s" % (oldest))
 
         # all subsequent requests use the max_id param to prevent duplicates
@@ -74,10 +74,15 @@ def get_all_tweets(screen_name):
     bad_words = get_bad_phrases(bucket, key)
     final_list = ""
     for tweet in all_tweets:
-        if hasattr(tweet, "full_text"):
-            raw = tweet.full_text
-        else:
-            raw = tweet.text
+        try:
+            if hasattr(tweet,"retweet_status"):
+                raw = tweet.retweet_status.full_text
+            elif hasattr(tweet, "full_text"):
+                raw = tweet.full_text
+            else:
+                raw = tweet.text
+        except Exception:
+            print("Unable to parse tweet")
 
         for phrase in bad_words:
             if phrase in raw:
@@ -92,4 +97,5 @@ def get_all_tweets(screen_name):
 
 
 if __name__ == '__main__':
-    downloader_function(None, None)
+    # downloader_function(None, None)
+    get_all_tweets("7e5h")
