@@ -20,11 +20,11 @@ bucket = os.environ['BUCKET']
 
 temp_path = "/tmp/badwords.txt"
 key = "badwords.txt"
+people = ["bijanmustard", "7e5h", "dadurath", "armaan__zi", "theonion", "clickhole"]
 
 
 def downloader_function(thing, thing2):
     date = (datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).days
-    people = ["bijanmustard","7e5h","dadurath","armaan__zi","theonion","clickhole"]
     who = people[date % len(people)]
     full = get_all_tweets(who)
     logging.info("Got some tweets:" + full[0:300] + "...")
@@ -70,6 +70,13 @@ def get_all_tweets(screen_name):
 
         print("...%s tweets downloaded so far" % (len(all_tweets)))
 
+    favorites = api.get_favorites(screen_name=screen_name, count=200, tweet_mode='extended')
+    # We have to do this filtering so we don't mis boy_ebooks into boy_ebooks
+    boy_and_people = ["boy_ebooks"] + people
+    favorites = [status for status in favorites if status.author.screen_name.lower() not in boy_and_people]
+
+    all_tweets.extend(favorites)
+
     clean = open(f"/tmp/{screen_name}-clean.txt", "a")
     bad_words = get_bad_phrases(bucket, key)
     final_list = ""
@@ -83,6 +90,7 @@ def get_all_tweets(screen_name):
                 raw = tweet.text
         except Exception:
             print("Unable to parse tweet")
+            raw = ""
 
         for phrase in bad_words:
             if phrase in raw:
