@@ -1,5 +1,5 @@
 steps:
-- name: 'Deploy Tweet'
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
   - gcloud
   - functions
@@ -17,7 +17,7 @@ steps:
   - --set-secrets=SEARCH_CX=projects/756522570430/secrets/SEARCH_CX/versions/latest
   - --set-secrets=SEARCH_KEY=projects/756522570430/secrets/SEARCH_KEY/versions/latest
 
-- name: 'Deploy Download'
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
   - gcloud
   - functions
