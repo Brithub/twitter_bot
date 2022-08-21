@@ -27,15 +27,16 @@ def downloader_function(thing, thing2):
     hour = int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds() / 3600)
     who = people[hour % len(people)]
     full = get_all_tweets(who)
-    logging.info("Got some tweets:" + full[0:300] + "...")
-    try:
-        get_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
-        delete_blob("twitter_bot_bucket", f"{who}-clean.txt")
-    except Exception as e:
-        # We could check if that blob exists.... or this
-        print("Ain't it")
+    tweet_count = len(full.split('\n'))
+    logging.info(f"Got {tweet_count} tweets")
+    # try:
+    #     get_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
+    #     delete_blob("twitter_bot_bucket", f"{who}-clean.txt")
+    # except Exception as e:
+    #     # We could check if that blob exists.... or this
+    #     print("Ain't it")
     upload_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
-    return(f"Got {len(full)} tweets for {who}")
+    return f"Got and wrote {tweet_count} tweets for {who}"
 
 
 def get_all_tweets(screen_name):
