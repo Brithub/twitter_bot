@@ -24,7 +24,7 @@ def compose_and_send_tweet(thing, thing2):
             blob = bucket.blob(str(user.name))
             blob.download_to_filename(f"/tmp/{user.name}")
 
-            with open(f"/tmp/{user.name}", 'r', encoding="utf-8") as file:
+            with open(f"/tmp/{user.name}", 'r', encoding="utf-16") as file:
                 text = file.read()
             user_tweets = text.split("\n")
             tweets.append(user_tweets)
