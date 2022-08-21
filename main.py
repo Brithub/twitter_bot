@@ -7,9 +7,7 @@ def downloader_function(thing, thing2):
     try:
         return tweet_dumper.downloader_function(thing, thing2)
     except Exception as e:
-        print(f"Something went wrong")
-        return e.with_traceback()
-
+        return (f"Something went wrong: {e}")
 
 def compose_and_send_tweet(thing, thing2):
     return generate.compose_and_send_tweet(thing, thing2)
