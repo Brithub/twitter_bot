@@ -73,7 +73,9 @@ def get_all_tweets(screen_name):
 
     all_tweets.extend(favorites)
 
-    clean = open(f"/tmp/{screen_name}-clean.txt", "a")
+    if os.path.exists(f"/tmp/{screen_name}-clean.txt"):
+        os.remove(f"/tmp/{screen_name}-clean.txt")
+    clean = open(f"/tmp/{screen_name}-clean.txt", "a", encoding="utf-16")
     bad_words = get_bad_phrases(bucket, key)
     final_list = ""
     for tweet in all_tweets:
@@ -82,8 +84,10 @@ def get_all_tweets(screen_name):
             if hasattr(tweet, "in_reply_to_status_id"):
                 if tweet.in_reply_to_status_id is not None:
                     continue
-            # Now try and find the actual text
-            if hasattr(tweet,"retweeted_status"):
+            # Now try and find text if it's a retweet
+            if hasattr(tweet, "retweeted_status"):
+                if hasattr(tweet.retweeted_status, "truncated") and tweet.retweeted_status.truncated:
+                    continue
                 if hasattr(tweet, "full_text"):
                     raw = tweet.retweeted_status.full_text
                 else:
@@ -91,6 +95,8 @@ def get_all_tweets(screen_name):
             elif hasattr(tweet, "full_text"):
                 raw = tweet.full_text
             else:
+                if hasattr(tweet, "truncated") and tweet.truncated:
+                    continue
                 raw = tweet.text
         except Exception as e:
             print("Unable to parse tweet")
@@ -98,12 +104,11 @@ def get_all_tweets(screen_name):
         for phrase in bad_words:
             if phrase in raw:
                 raw = ""
-
         cleaned = clean_text(raw)
-
         if cleaned != "":
             final_list += (cleaned + "\n")
     clean.write(final_list)
+    clean.close()
     return final_list
 
 
