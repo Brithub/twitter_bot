@@ -78,8 +78,16 @@ def get_all_tweets(screen_name):
     final_list = ""
     for tweet in all_tweets:
         try:
+            # This first condition checks if it's a reply
+            if hasattr(tweet, "in_reply_to_status_id"):
+                if tweet.in_reply_to_status_id is not None:
+                    continue
+            # Now try and find the actual text
             if hasattr(tweet,"retweeted_status"):
-                raw = tweet.retweeted_status.full_text
+                if hasattr(tweet, "full_text"):
+                    raw = tweet.retweeted_status.full_text
+                else:
+                    raw = tweet.retweeted_status.text
             elif hasattr(tweet, "full_text"):
                 raw = tweet.full_text
             else:
@@ -87,7 +95,6 @@ def get_all_tweets(screen_name):
         except Exception as e:
             print("Unable to parse tweet")
             raw = ""
-
         for phrase in bad_words:
             if phrase in raw:
                 raw = ""
