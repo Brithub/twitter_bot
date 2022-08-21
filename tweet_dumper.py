@@ -29,12 +29,6 @@ def downloader_function(thing, thing2):
     full = get_all_tweets(who)
     tweet_count = len(full.split('\n'))
     logging.info(f"Got {tweet_count} tweets")
-    # try:
-    #     get_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
-    #     delete_blob("twitter_bot_bucket", f"{who}-clean.txt")
-    # except Exception as e:
-    #     # We could check if that blob exists.... or this
-    #     print("Ain't it")
     upload_blob("twitter_bot_bucket", f"/tmp/{who}-clean.txt", f"{who}-clean.txt")
     return f"Got and wrote {tweet_count} tweets for {who}"
 
@@ -58,7 +52,7 @@ def get_all_tweets(screen_name):
     oldest = all_tweets[-1].id - 1
 
     # keep grabbing tweets until there are no tweets left to grab
-    while len(all_tweets) < 750:
+    while len(all_tweets) < 300:
         print("getting tweets before %s" % (oldest))
 
         # all subsequent requests use the max_id param to prevent duplicates
