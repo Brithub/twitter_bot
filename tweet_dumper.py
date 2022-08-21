@@ -78,13 +78,13 @@ def get_all_tweets(screen_name):
     final_list = ""
     for tweet in all_tweets:
         try:
-            if hasattr(tweet,"retweet_status"):
-                raw = tweet.retweet_status.full_text
+            if hasattr(tweet,"retweeted_status"):
+                raw = tweet.retweeted_status.full_text
             elif hasattr(tweet, "full_text"):
                 raw = tweet.full_text
             else:
                 raw = tweet.text
-        except Exception:
+        except Exception as e:
             print("Unable to parse tweet")
             raw = ""
 
